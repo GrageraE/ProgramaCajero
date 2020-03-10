@@ -1,6 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ventanatipopago.h"
+//ventanaPago*
+#include "ventanapagotarjeta.h"
+
+#include "ventanapagocheques.h"
+//--------------
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,16 +14,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->cuenta->setReadOnly(true); //Evitar que el usuario introduzca caracteres no validos
-    ui->total->setText("0");
+    ui->total->setText("0€");
+    total = 0;
     //Para que el usuario pueda seleccionar varios articulos al mismo tiempo:
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    //El tipo de pago, por defecto, no esta seleccionado
+    tipopago = Nulo;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 
 void MainWindow::on_actionSalir_triggered()
 {
@@ -28,8 +36,9 @@ void MainWindow::on_actionCerrar_triggered()
 {
     ui->cuenta->clear();
     ui->tipoPago->clear();
-    ui->total->clear();
+    ui->total->setText("0€");
     ui->listaArticulos->clear();
+    total = 0;
 }
 
 void MainWindow::on_boton1_clicked()
@@ -84,24 +93,33 @@ void MainWindow::on_boton0_clicked()
 
 void MainWindow::on_botonSiguiente_clicked()
 {
+    //Modificar el total
     QString txtCuenta = ui->cuenta->text();
     if(txtCuenta.isEmpty()) return;
-    ui->total->setText(QString::number(ui->total->text().toInt() + txtCuenta.toInt()));
+    total += txtCuenta.toInt();
+    ui->total->setText(QString::number(total) + "€");
+    //Añadir el objeto a la lista
     new QListWidgetItem(txtCuenta+"€", ui->listaArticulos);
     ui->cuenta->clear();
 }
 
-void MainWindow::on_pushButton_2_clicked() //Eliminar articulo
+void MainWindow::on_pushButton_2_clicked() //Eliminar articulos
 {
     QList<QListWidgetItem*> lista = ui->listaArticulos->selectedItems();
     for(int i = 0; i < lista.size(); ++i)
     {
+        QString txt = lista.at(i)->text();
+        txt.truncate(txt.size()-1); //Quitamos el $
+        //Restamos del total la cantidad de los elementos seleccionados
+        int cantidadAQuitar = txt.toInt();
+        total -= cantidadAQuitar;
         /*
-         * Como takeItem() requere de la columna, la obtenemos con row(),
-         * que pide un QListWidgetItem*, los cueles se encuentran en nuestra lista
-         */
+        * Como takeItem() requere de la columna, la obtenemos con row(),
+        * que pide un QListWidgetItem*, los cueles se encuentran en nuestra lista
+        */
         ui->listaArticulos->takeItem(ui->listaArticulos->row(lista.at(i)));
     }
+    ui->total->setText(QString::number(total) + "$"); //Mostramos el nuevo total
 }
 
 void MainWindow::on_cambiarTipoPago_clicked()
@@ -111,11 +129,53 @@ void MainWindow::on_cambiarTipoPago_clicked()
     if(ventana.exec() == QDialog::DialogCode::Rejected) return;
     switch(ventana.tipodepago)
     {
-    case ventanaTipoPago::Tarjeta: ui->tipoPago->setText("Con Tarjeta");
+    case ventanaTipoPago::Tarjeta: {
+        ui->tipoPago->setText("Con Tarjeta");
+        tipopago = Tarjeta;
+    }
         break;
-    case ventanaTipoPago::Efectivo: ui->tipoPago->setText("En Efectivo");
+    case ventanaTipoPago::Efectivo: {
+        ui->tipoPago->setText("En Efectivo");
+        tipopago = Efectivo;
+    }
         break;
-    case ventanaTipoPago::Cheques: ui->tipoPago->setText("Con Cheques");
+    case ventanaTipoPago::Cheques: {
+        ui->tipoPago->setText("Con Cheques");
+        tipopago = Cheque;
+    }
         break;
     }
+}
+
+void MainWindow::on_pagar_clicked()
+{
+    if(ui->listaArticulos->count() == 0){
+        QMessageBox::critical(this, "Error", "No hay artículos a pagar");
+        return;
+    }
+
+    switch(tipopago)
+    {
+    case MainWindow::Nulo:{
+        QMessageBox::critical(this, "Error", "No se ha seleccionado un tipo de pago");
+        return;
+    }
+    case MainWindow::Tarjeta:{
+        ventanaPagoTarjeta ventana(total);
+        ventana.setModal(true);
+        if(ventana.exec() == QDialog::DialogCode::Rejected) return;
+    }
+        break;
+    case MainWindow::Efectivo:{
+
+    }
+        break;
+    case MainWindow::Cheque:{
+        ventanaPagoCheques ventana(total);
+        ventana.setModal(true);
+        if(ventana.exec() == QDialog::DialogCode::Rejected) return;
+    }
+        break;
+    }
+    on_actionCerrar_triggered(); //Cierra la sesión
 }

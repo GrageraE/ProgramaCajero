@@ -60,6 +60,11 @@
    </property>
    <item>
     <property name="text">
+     <string>Seleccione Tipo...</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
      <string>Con Tarjeta</string>
     </property>
    </item>

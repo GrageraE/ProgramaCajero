@@ -18,6 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    ventanapagocheques.cpp \
+    ventanapagotarjeta.cpp \
     ventanatipopago.cpp
 
 HEADERS += \
@@ -58,13 +60,20 @@ HEADERS += \
     ../../vcpkg/JSON/include/nlohmann/thirdparty/hedley/hedley_undef.hpp \
     #Project files
     mainwindow.h \
+    ventanapagocheques.h \
+    ventanapagotarjeta.h \
     ventanatipopago.h
 
 FORMS += \
     mainwindow.ui \
+    ventanapagocheques.ui \
+    ventanapagotarjeta.ui \
     ventanatipopago.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    generadorCheques.py

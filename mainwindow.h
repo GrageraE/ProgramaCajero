@@ -46,7 +46,16 @@ private slots:
 
     void on_cambiarTipoPago_clicked();
 
+    void on_pagar_clicked();
+
 private:
     Ui::MainWindow *ui;
+    enum TipoPago{
+        Nulo = -1, //Tipo de pago no seleccionado
+        Tarjeta,
+        Efectivo,
+        Cheque
+    }tipopago;
+    int total;
 };
 #endif // MAINWINDOW_H

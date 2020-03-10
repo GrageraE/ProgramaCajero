@@ -1,5 +1,6 @@
 #include "ventanatipopago.h"
 #include "ui_ventanatipopago.h"
+#include <QMessageBox>
 
 ventanaTipoPago::ventanaTipoPago(QWidget *parent) :
     QDialog(parent),
@@ -22,11 +23,15 @@ void ventanaTipoPago::on_buttonBox_accepted()
 {
     switch(ui->comboBox->currentIndex())
     {
-    case 0: tipodepago = Tarjeta;
+    case 0:{
+        QMessageBox::critical(this, "Error", "Seleccione un tipo de pago");
+        return;
+    }
+    case 1: tipodepago = Tarjeta;
         break;
-    case 1: tipodepago = Efectivo;
+    case 2: tipodepago = Efectivo;
         break;
-    case 2: tipodepago = Cheques;
+    case 3: tipodepago = Cheques;
         break;
     default: reject(); /*Error*/
     }
