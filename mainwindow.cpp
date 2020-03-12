@@ -109,7 +109,7 @@ void MainWindow::on_pushButton_2_clicked() //Eliminar articulos
     for(int i = 0; i < lista.size(); ++i)
     {
         QString txt = lista.at(i)->text();
-        txt.truncate(txt.size()-1); //Quitamos el $
+        txt.truncate(txt.size()-1); //Quitamos el €
         //Restamos del total la cantidad de los elementos seleccionados
         int cantidadAQuitar = txt.toInt();
         total -= cantidadAQuitar;
@@ -119,7 +119,7 @@ void MainWindow::on_pushButton_2_clicked() //Eliminar articulos
         */
         ui->listaArticulos->takeItem(ui->listaArticulos->row(lista.at(i)));
     }
-    ui->total->setText(QString::number(total) + "$"); //Mostramos el nuevo total
+    ui->total->setText(QString::number(total) + "€"); //Mostramos el nuevo total
 }
 
 void MainWindow::on_cambiarTipoPago_clicked()

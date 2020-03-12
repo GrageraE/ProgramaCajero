@@ -25,7 +25,14 @@ private slots:
 private:
     Ui::ventanaPagoCheques *ui;
     int total;
+    enum ValorCheque{
+        Nulo = -1, //Cheque no valido
+        Diez = 10,
+        Veinte = 20,
+        Cincuenta = 50
+    }valorCheque;
     int dineroPagado;
+    ValorCheque comprobarCheque(QString cheque);
 };
 
 #endif // VENTANAPAGOCHEQUES_H
