@@ -14,13 +14,12 @@ Una prueba para crear un programa que serviría para las cajas
 #### Ya desarrolladas
 - De momento hay dos tipos (de tres) de pago desarrollados:
   - Con tarjeta (no incluye API)
-  - Con cheques (falta la compronación)
+  - Con cheques
 - Una lista para ver los precios a pagar
-- Un generador de cheques, escrito en Python (aunque de momento esté en la raíz, lo cambiaré a una subcarpeta)
+- Un generador de cheques, escrito en Python ~~(aunque de momento esté en la raíz, lo cambiaré a una subcarpeta)~~ y localizado en la carpeta `scripts/' 
 #### Futuro
-- Terminar de desarrollar el tipo de pago con cheques
 - Implementar el efectivo
 - Incluir un intérprete de JSON para guardar y crear sesiones de compra
+- Implementar la clase [QPrinter](https://doc.qt.io/qt-5/qprinter.html) para imprimir un recibo
 ## Generar Cheques
 * Para generar cheques, puedes usar el script de Python ya incluído en el proyecto
-* **NOTA:** De momento, no hay un comprobador en el programa principal, así que es posible que el cheque generado realmente no sea válido
