@@ -57,5 +57,6 @@ private:
         Cheque
     }tipopago;
     int total;
+    int numeroTarjeta; //Para imprimir recibo (TODO: mejorar esto)
 };
 #endif // MAINWINDOW_H

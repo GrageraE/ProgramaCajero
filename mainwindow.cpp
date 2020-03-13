@@ -3,8 +3,8 @@
 #include "ventanatipopago.h"
 //ventanaPago*
 #include "ventanapagotarjeta.h"
-
 #include "ventanapagocheques.h"
+//No se incluye implementacion de ventana para Efectivo por causas obvias
 //--------------
 #include <QMessageBox>
 
@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
     tipopago = Nulo;
+    numeroTarjeta = 0;
 }
 
 MainWindow::~MainWindow()
@@ -164,10 +165,11 @@ void MainWindow::on_pagar_clicked()
         ventanaPagoTarjeta ventana(total);
         ventana.setModal(true);
         if(ventana.exec() == QDialog::DialogCode::Rejected) return;
+        numeroTarjeta = ventana.numeroTarjeta;
     }
         break;
     case MainWindow::Efectivo:{
-
+        QMessageBox::information(this, "Pagado", "Pagado correctamente");
     }
         break;
     case MainWindow::Cheque:{
