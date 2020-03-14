@@ -5,24 +5,25 @@
 
 class Impresion
 {
-    //private:
+public:
     enum TipoPago{
+        Nulo = -1,
         Tarjeta,
         Efectivo,
         Cheques
     }tipopago;
 
-public:
-    Impresion(QList<QListWidgetItem*> _lista, int _total, Impresion::TipoPago _tipoPago);
-    void escribirPdf();
+    Impresion(QList<QListWidgetItem*> _lista, int _total);
     void imprimir();
     void setNumeroTarjeta(int _numero);
+    void setTipoPago(TipoPago _tipopago);
 private:
     QPrinter printer;
     const QString nombre = "recibo.pdf";
     QList<QListWidgetItem*> lista;
     int total;
     int numeroTarjeta;
+    void escribirPdf();
 };
 
 #endif // IMPRESION_H

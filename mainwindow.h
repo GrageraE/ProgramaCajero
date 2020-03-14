@@ -48,6 +48,8 @@ private slots:
 
     void on_pagar_clicked();
 
+    void on_recibo_clicked();
+
 private:
     Ui::MainWindow *ui;
     enum TipoPago{
