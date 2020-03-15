@@ -13,17 +13,18 @@ public:
         Cheques
     }tipopago;
 
-    Impresion(QList<QListWidgetItem*> _lista, int _total);
+    Impresion(QWidget* _parent, QList<QListWidgetItem*> _lista, int _total);
     void imprimir();
-    void setNumeroTarjeta(int _numero);
+    void setNumeroTarjeta(QString _numero);
     void setTipoPago(TipoPago _tipopago);
 private:
     QPrinter printer;
     const QString nombre = "recibo.pdf";
     QList<QListWidgetItem*> lista;
     int total;
-    int numeroTarjeta;
+    QString numeroTarjeta;
     void escribirPdf();
+    QWidget* parent;
 };
 
 #endif // IMPRESION_H

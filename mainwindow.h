@@ -50,6 +50,8 @@ private slots:
 
     void on_recibo_clicked();
 
+    void on_borrar_clicked();
+
 private:
     Ui::MainWindow *ui;
     enum TipoPago{
@@ -59,6 +61,7 @@ private:
         Cheque
     }tipopago;
     int total;
-    int numeroTarjeta; //Para imprimir recibo (TODO: mejorar esto)
+    QString numeroTarjeta; //Para imprimir recibo
+    bool pagado;
 };
 #endif // MAINWINDOW_H

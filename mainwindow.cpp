@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
     tipopago = Nulo;
-    numeroTarjeta = 0;
+    numeroTarjeta = "";
+    pagado = false;
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +42,7 @@ void MainWindow::on_actionCerrar_triggered()
     ui->total->setText("0€");
     ui->listaArticulos->clear();
     total = 0;
+    tipopago = Nulo;
 }
 
 void MainWindow::on_boton1_clicked()
@@ -180,7 +182,18 @@ void MainWindow::on_pagar_clicked()
     }
         break;
     }
-    on_actionCerrar_triggered(); //Cierra la sesión
+    pagado = true; //Ya esta pagado
+    if(QMessageBox::question(this, "Recibo", "¿Quiere imprimir un recibo ahora?")
+            == QMessageBox::Yes)
+    {
+        on_recibo_clicked(); //Imprimir
+    }
+    if(QMessageBox::question(this, "Terminar", "¿Quiere terminar la sesión ahora? No podrás"
+                             " imprimir un recibo después de esta acción")
+            == QMessageBox::Yes)
+    {
+        on_actionCerrar_triggered(); //Cerrar
+    }
 }
 
 void MainWindow::on_recibo_clicked()
@@ -196,13 +209,18 @@ void MainWindow::on_recibo_clicked()
     {
         lista.push_back(ui->listaArticulos->item(i));
     }
-    //Comprobamos el total
+    //Comprobamos el total y el estado de pago
+    if(!pagado)
+    {
+        QMessageBox::critical(this, "Error", "No se ha completado el pago");
+        return;
+    }
     if(total == 0)
     {
         QMessageBox::critical(this, "Error", "El total es 0");
         return;
     }
-    Impresion impresion(lista, total);
+    Impresion impresion(this, lista, total);
     //Seleccionamos el tipo de pago
     switch(tipopago)
     {
@@ -226,4 +244,11 @@ void MainWindow::on_recibo_clicked()
     }
     impresion.imprimir();
     QMessageBox::information(this, "Información", "Pdf creado correctamente");
+}
+
+void MainWindow::on_borrar_clicked()
+{
+    QString txt = ui->cuenta->text();
+    txt.truncate(txt.size()-1);
+    ui->cuenta->setText(txt);
 }

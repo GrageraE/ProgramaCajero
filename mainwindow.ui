@@ -24,7 +24,7 @@
      <rect>
       <x>50</x>
       <y>40</y>
-      <width>211</width>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -309,6 +309,19 @@
     </property>
     <property name="text">
      <string>Eliminar Articulos</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="borrar">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>50</y>
+      <width>51</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;-</string>
     </property>
    </widget>
   </widget>
