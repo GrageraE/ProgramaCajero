@@ -19,7 +19,7 @@ public:
     void setTipoPago(TipoPago _tipopago);
 private:
     QPrinter printer;
-    const QString nombre = "recibo.pdf";
+    const QString nombre = "recibo.xps";
     QList<QListWidgetItem*> lista;
     int total;
     QString numeroTarjeta;
