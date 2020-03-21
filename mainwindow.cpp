@@ -3,8 +3,11 @@
 #include "ventanatipopago.h"
 //ventanaPago*
 #include "ventanapagotarjeta.h"
-
 #include "ventanapagocheques.h"
+//--------------
+//Json
+#include "json.h"
+#include <QFileDialog>
 //--------------
 #include <QMessageBox>
 
@@ -20,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
     tipopago = Nulo;
+    //Por defecto, esta sesion se considera nueva
+    nuevoJson = true;
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +44,7 @@ void MainWindow::on_actionCerrar_triggered()
     ui->total->setText("0€");
     ui->listaArticulos->clear();
     total = 0;
+    if(!nuevoJson) json.~Json();
 }
 
 void MainWindow::on_boton1_clicked()
@@ -178,4 +184,42 @@ void MainWindow::on_pagar_clicked()
         break;
     }
     on_actionCerrar_triggered(); //Cierra la sesión
+}
+
+//JSON:
+void MainWindow::on_actionAbrir_triggered()
+{
+    QString nombreArchivoJson =
+            QFileDialog::getOpenFileName(this, "Abrir Sesión...", QDir::currentPath(),
+                                         "Archivos JSON (*.json)");
+    if(nombreArchivoJson.isEmpty()) return;
+    json.abrirJson(nombreArchivoJson, this);
+    nuevoJson = false;
+}
+
+void MainWindow::on_actionGuardar_triggered()
+{
+    QString nombreArchivoJson;
+    if(nuevoJson)
+    {
+        nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión...", QDir::currentPath(),
+                                     "Archivos JSON (*.json)");
+
+    }
+    else
+        nombreArchivoJson = json.getNombreArchivo();
+
+    nuevoJson = false;
+    //TODO: Usar los setters de la clase
+    json.anadirParametros();
+}
+
+void MainWindow::on_actionGuardar_como_triggered()
+{
+    nuevoJson = false;
+    QString nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión como...",
+                                                             QDir::currentPath(),
+                                                             "Archivos JSON (*.json)");
+    if(nombreArchivoJson.isEmpty()) return;
+    //TODO: Usar nuestra clase
 }
