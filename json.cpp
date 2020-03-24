@@ -44,9 +44,54 @@ void Json::abrirJson(QString _nombreJson, QWidget* _parent)
         //TODO: Manejo de errores
         return;
     }
-    leerArchivo >> j;
+    j = nlohmann::json::parse(leerArchivo);
     leerArchivo.close();
     return; //TODO: Manejar esto
+}
+
+/*
+ * Esta funcion rellena una estructura "Sesion", con los datos del Json
+ * Antes de invocarla, hay que llamar a abrirJson(QString, QWidget*)
+ * En caso de fallar, retorna conjunto vacio({})
+*/
+Json::Sesion Json::interpretarJson()
+{
+    if(parent == nullptr)
+    {
+        qDebug() <<"No se ha configurado un QWidget*. Abortar";
+        return {};
+    }
+    Sesion sesion;
+    //Obtenemos el total:
+    sesion.total = j.at("Total");
+    //Obtenemos el valor de si esta pagado o no:
+    sesion.pagado = j.at("Pagado");
+    //Obtenemos el tipo de pago
+    if(j.at("Tipo de pago") == "No seleccionado")
+    {
+        sesion.tipopago = Nulo;
+    }
+    else if(j.at("Tipo de pago") == "Con tarjeta")
+    {
+        sesion.tipopago = Tarjeta;
+        sesion.tarjeta = QString::fromStdString(j.at("Numero de tarjeta"));
+    }
+    else if(j.at("Tipo de pago") == "En efectivo")
+    {
+        sesion.tipopago = Efectivo;
+    }
+    else if(j.at("Tipo de pago") == "Con cheques")
+    {
+        sesion.tipopago = Cheques;
+    }
+    //Y obtenemos la lista de articulos
+    int cantidadArticulos = j.at("Articulos:").at("Cantidad: ");
+    for(int i = 0; i < cantidadArticulos; ++i)
+    {
+        sesion.listaArticulos.push_back(QString::fromStdString(j.at("Articulos:").at("Articulo " + std::to_string(i+1))));
+    }
+    //Hemos terminado
+    return sesion;
 }
 
 /*
@@ -117,7 +162,7 @@ void Json::anadirParametros(QWidget* _parent) /*=nullptr*/
         break;
     case Tarjeta:{
         j["Tipo de pago"] = "Con tarjeta";
-        j["Numero de tarjeta: "] = tarjeta.toInt();
+        j["Numero de tarjeta"] = tarjeta.toInt();
     }
         break;
     case Efectivo:{

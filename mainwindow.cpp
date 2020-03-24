@@ -199,7 +199,7 @@ void MainWindow::on_actionAbrir_triggered()
     if(nombreArchivoJson.isEmpty()) return;
     json.abrirJson(nombreArchivoJson, this);
     nuevoJson = false;
-    //TODO: Recoger el JSON
+
 }
 
 void MainWindow::on_actionGuardar_triggered()

@@ -19,12 +19,23 @@ public:
     void anadirParametros(QWidget* _parent = nullptr);
     QString getNombreArchivo();
 
+    //Tipo de pago:
     enum TipoPago{
         Nulo = -1,
         Tarjeta,
         Efectivo,
         Cheques
     }tipopago;
+
+    //Sesion:
+    struct Sesion{
+        int total;
+        TipoPago tipopago;
+        QString tarjeta;
+        QList<QString> listaArticulos;
+        bool pagado;
+    };
+    Sesion interpretarJson();
 
     //Setters
     void setTipoPago(TipoPago _tipopago);
