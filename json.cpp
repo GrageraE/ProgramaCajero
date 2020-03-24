@@ -6,6 +6,12 @@
 //Libreria JSON
 //TODO: Cambiar la ubicación del single_include
 #include <../../vcpkg/JSON/single_include/nlohmann/json.hpp>
+//Manejo de archivos
+#include <iomanip> //std::setw
+#include <fstream>
+using std::ofstream;
+using std::ifstream;
+using std::ios;
 
 Json::Json()
 {
@@ -32,30 +38,61 @@ void Json::abrirJson(QString _nombreJson, QWidget* _parent)
 {
     nombreJson = _nombreJson;
     parent = _parent;
-    //TODO: Usar la libreria
+    //Abrimos el archivo
+    leerArchivo.open(nombreJson.toStdString(), ios::in);
+    if(leerArchivo.fail()){
+        //TODO: Manejo de errores
+        return;
+    }
+    leerArchivo >> j;
+    leerArchivo.close();
+    return; //TODO: Manejar esto
+}
+
+/*
+ * Esta funcion guarda el JSON previamente construido con la funcion
+ * Json::anadirParametros(QWidget*)
+*/
+void Json::guardarJson(QString _nombreJson)
+{
+    nombreJson = _nombreJson;
+    //Guardamos en el archivo
+    crearArchivo.open(nombreJson.toStdString(), ios::out);
+    if(crearArchivo.fail())
+    {
+        //TODO: manejar esto
+        return;
+    }
+    crearArchivo <<std::setw(4) <<j <<"\n";
+    crearArchivo.close();
+    //TODO: manejar esto:
+    return;
 }
 
 /*
  * Esta funcion cierra el Json ya abierto previamente.
- * Se ejecuta con el destructor.
+ * Se ejecuta con el destructor (funcion privada).
 */
 void Json::cerrarJson()
 {
-    //TODO: Usar la libreria
+    if(leerArchivo.is_open()) leerArchivo.close();
+    if(crearArchivo.is_open()) crearArchivo.close();
+    j.clear();
 }
 
 /*
  * Esta funcion realiza un chequeo y despues guarda los parametros ya
- * dados con los setters en el Json
+ * dados con los setters en el Json. Requiere un QWidget* opcional
 */
-void Json::anadirParametros()
+void Json::anadirParametros(QWidget* _parent) /*=nullptr*/
 {
     //Comprobar el QWidget*
-    if(parent == nullptr)
+    if(_parent == nullptr && parent == nullptr)
     {
-        qDebug() <<"Error: no se ha inicializado el parametro QWidget*. Abortar";
+        qDebug() <<"Error: no se ha configurado un QWidget*. Abortar";
         return;
     }
+    parent = _parent;
     //Comprobacion del total
     if(total <= 0)
     {
@@ -69,16 +106,38 @@ void Json::anadirParametros()
         QMessageBox::critical(parent, "Error", "No hay artículos añadidos");
         return;
     }
-    //Comprobar el tipo de pago
-    switch (tipopago) {
-    case Nulo:{
-        QMessageBox::critical(parent, "Error", "No se ha seleccionado un tipo de pago");
-        return;
-    }
-    default: break;
-    }
-    //TODO: Usar la libreria
     //----------------------
+    //Guardamos el total
+    j["Total"] = total;
+    //Guardamos el tipo de pago
+    switch(tipopago){
+    case Nulo:{
+        j["Tipo de pago"] = "No seleccionado";
+    }
+        break;
+    case Tarjeta:{
+        j["Tipo de pago"] = "Con tarjeta";
+        j["Numero de tarjeta: "] = tarjeta.toInt();
+    }
+        break;
+    case Efectivo:{
+        j["Tipo de pago"] = "En efectivo";
+    }
+        break;
+    case Cheques:{
+        j["Tipo de pago"] = "Con cheques";
+    }
+        break;
+    }
+    //Guardamos si esta pagado o no
+    j["Pagado"] = pagado;
+    //Guardamos la lista de articulos
+    j["Articulos:"]["Cantidad: "] = listaArticulos.size();
+    for(int i = 0; i < listaArticulos.size(); ++i)
+    {
+        j["Articulos:"]["Articulo " + std::to_string(i+1)] = listaArticulos.at(i)->text().toStdString();
+    }
+    return; //TODO: manejar esto
 }
 
 QString Json::getNombreArchivo()

@@ -64,6 +64,8 @@ private:
         Cheque
     }tipopago;
     int total;
+    QString numeroTarjeta;
+    bool pagado;
 
     Json json;
     bool nuevoJson;

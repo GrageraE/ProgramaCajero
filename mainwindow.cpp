@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->cuenta->setReadOnly(true); //Evitar que el usuario introduzca caracteres no validos
     ui->total->setText("0€");
     total = 0;
+    numeroTarjeta = "";
+    pagado = false;
     //Para que el usuario pueda seleccionar varios articulos al mismo tiempo:
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
@@ -170,6 +172,7 @@ void MainWindow::on_pagar_clicked()
         ventanaPagoTarjeta ventana(total);
         ventana.setModal(true);
         if(ventana.exec() == QDialog::DialogCode::Rejected) return;
+        numeroTarjeta = ventana.nTarjeta;
     }
         break;
     case MainWindow::Efectivo:{
@@ -183,6 +186,7 @@ void MainWindow::on_pagar_clicked()
     }
         break;
     }
+    pagado = true;
     on_actionCerrar_triggered(); //Cierra la sesión
 }
 
@@ -195,6 +199,7 @@ void MainWindow::on_actionAbrir_triggered()
     if(nombreArchivoJson.isEmpty()) return;
     json.abrirJson(nombreArchivoJson, this);
     nuevoJson = false;
+    //TODO: Recoger el JSON
 }
 
 void MainWindow::on_actionGuardar_triggered()
@@ -210,16 +215,92 @@ void MainWindow::on_actionGuardar_triggered()
         nombreArchivoJson = json.getNombreArchivo();
 
     nuevoJson = false;
-    //TODO: Usar los setters de la clase
-    json.anadirParametros();
+    //Configuramos el total
+    json.setTotal(total);
+    //Configuramos la lista
+    if(ui->listaArticulos->count() == 0)
+    {
+        QMessageBox::critical(this, "Error", "La lista de artículos está vacía.");
+        return;
+    }
+    QList<QListWidgetItem*> lista;
+    for(int i = 0; i < ui->listaArticulos->count(); ++i)
+    {
+        lista.push_back(ui->listaArticulos->item(i));
+    }
+    json.setArticulos(lista);
+    //Configuramos el tipo de pago
+    switch(tipopago)
+    {
+    case Nulo:{
+        json.setTipoPago(Json::TipoPago::Nulo);
+    }
+        break;
+    case Tarjeta:{
+        json.setTipoPago(Json::TipoPago::Tarjeta);
+        json.setnumeroTarjeta(numeroTarjeta);
+    }
+        break;
+    case Efectivo:{
+        json.setTipoPago(Json::TipoPago::Efectivo);
+    }
+        break;
+    case Cheque:{
+        json.setTipoPago(Json::TipoPago::Cheques);
+    }
+        break;
+    }
+    //Mandamos el estado de la compra
+    json.setPagado(pagado);
+    //Lo guardamos
+    json.anadirParametros(this);
+    json.guardarJson(nombreArchivoJson);
 }
 
 void MainWindow::on_actionGuardar_como_triggered()
 {
-    nuevoJson = false;
     QString nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión como...",
                                                              QDir::currentPath(),
                                                              "Archivos JSON (*.json)");
     if(nombreArchivoJson.isEmpty()) return;
-    //TODO: Usar nuestra clase
+    //Comprobaciones:
+    if(total <= 0)
+    {
+        QMessageBox::critical(this, "Error", "Inicie la sesión de compra para guardar esta sesión");
+        return;
+    }
+    if(ui->listaArticulos->count() == 0) return;
+    //Creamos el JSON
+    json.setTotal(total);
+    json.setPagado(pagado);
+    //Obtenemos los articulos
+    QList<QListWidgetItem*> lista;
+    for(int i = 0; i < ui->listaArticulos->count(); ++i)
+    {
+        lista.push_back(ui->listaArticulos->item(i));
+    }
+    json.setArticulos(lista);
+    //Obtenemos el tipo de pago
+    switch(tipopago){
+    case Nulo:{
+        json.setTipoPago(Json::TipoPago::Nulo);
+    }
+        break;
+    case Tarjeta:{
+        json.setTipoPago(Json::TipoPago::Tarjeta);
+        json.setnumeroTarjeta(numeroTarjeta);
+    }
+        break;
+    case Efectivo:{
+        json.setTipoPago(Json::TipoPago::Efectivo);
+    }
+        break;
+    case Cheque:{
+        json.setTipoPago(Json::TipoPago::Cheques);
+    }
+        break;
+    }
+    //Creamos el Json
+    json.anadirParametros(this);
+    json.guardarJson(nombreArchivoJson);
 }

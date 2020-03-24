@@ -14,6 +14,7 @@ class ventanaPagoTarjeta : public QDialog
 public:
     explicit ventanaPagoTarjeta(int _total, QWidget *parent = nullptr);
     ~ventanaPagoTarjeta();
+    QString nTarjeta;
 
 private slots:
     void on_buttonBox_rejected();
