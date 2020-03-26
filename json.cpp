@@ -31,22 +31,21 @@ Json::~Json()
 
 /*
  * Esta funcion abre un archivo Json con el argumento
- * "nombreJson". Ademas, requiere de QWidget* para lanzar
- * en un futuro QMessageBox's
+ * "nombreJson". Ademas, requiere de QWidget* para lanzar QMessageBox's
+ * @Retorna 0 en caso de exito y -1 en caso de fallo
 */
-void Json::abrirJson(QString _nombreJson, QWidget* _parent)
+int Json::abrirJson(QString _nombreJson, QWidget* _parent)
 {
     nombreJson = _nombreJson;
     parent = _parent;
     //Abrimos el archivo
     leerArchivo.open(nombreJson.toStdString(), ios::in);
     if(leerArchivo.fail()){
-        //TODO: Manejo de errores
-        return;
+        return -1;
     }
     j = nlohmann::json::parse(leerArchivo);
     leerArchivo.close();
-    return; //TODO: Manejar esto
+    return 0;
 }
 
 /*
@@ -105,21 +104,20 @@ Json::Sesion Json::interpretarJson()
 /*
  * Esta funcion guarda el JSON previamente construido con la funcion
  * Json::anadirParametros(QWidget*)
+ * @☺Retorna 0 en caso de exito y -1 en caso de fallo
 */
-void Json::guardarJson(QString _nombreJson)
+int Json::guardarJson(QString _nombreJson)
 {
     nombreJson = _nombreJson;
     //Guardamos en el archivo
     crearArchivo.open(nombreJson.toStdString(), ios::out);
     if(crearArchivo.fail())
     {
-        //TODO: manejar esto
-        return;
+        return -1;
     }
     crearArchivo <<std::setw(4) <<j <<"\n";
     crearArchivo.close();
-    //TODO: manejar esto:
-    return;
+    return 0;
 }
 
 /*
@@ -136,14 +134,17 @@ void Json::cerrarJson()
 /*
  * Esta funcion realiza un chequeo y despues guarda los parametros ya
  * dados con los setters en el Json. Requiere un QWidget*
+ * @Retorna 0 en caso de exito y -1 en caso de cualquier tipo de fallo
+ * @Fallos: si la comprobacion de QWidget* sale incorrecta, ademas de retornar 0
+ * tambien muestra un mensaje en la consola. En el resto de fallos, lanza un QMessageBox::critical
 */
-void Json::anadirParametros(QWidget* _parent)
+int Json::anadirParametros(QWidget* _parent)
 {
     //Comprobar el QWidget*
     if(_parent == nullptr && parent == nullptr)
     {
         qDebug() <<"Error: no se ha configurado un QWidget*. Abortar";
-        return;
+        return -1;
     }
     parent = _parent;
     //Comprobacion del total
@@ -151,13 +152,13 @@ void Json::anadirParametros(QWidget* _parent)
     {
         QMessageBox::critical(parent, "Error", "El total es 0. Empieza una sesión de compra para"
                                                " guardarla.");
-        return;
+        return -1;
     }
     //Comprobar la lista de articulos
     if(listaArticulos.isEmpty())
     {
         QMessageBox::critical(parent, "Error", "No hay artículos añadidos");
-        return;
+        return -1;
     }
     //----------------------
     //Guardamos el total
@@ -190,7 +191,7 @@ void Json::anadirParametros(QWidget* _parent)
     {
         j["Articulos:"]["Articulo " + std::to_string(i+1)] = listaArticulos.at(i)->text().toStdString();
     }
-    return; //TODO: manejar esto
+    return 0;
 }
 
 QString Json::getNombreArchivo()
@@ -217,7 +218,6 @@ void Json::setTipoPago(TipoPago _tipopago)
 void Json::setnumeroTarjeta(QString _numeroTarjeta)
 {
     tarjeta = _numeroTarjeta;
-    setPagado(true); //De por si esta pagado
 }
 
 void Json::setArticulos(QList<QListWidgetItem *> _lista)

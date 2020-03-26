@@ -14,9 +14,9 @@ class Json
 public:
     Json();
     ~Json();
-    void abrirJson(QString _nombreJson, QWidget* _parent);
-    void guardarJson(QString _nombreJson);
-    void anadirParametros(QWidget* _parent);
+    int abrirJson(QString _nombreJson, QWidget* _parent);
+    int guardarJson(QString _nombreJson);
+    int anadirParametros(QWidget* _parent);
     QString getNombreArchivo();
 
     //Tipo de pago:

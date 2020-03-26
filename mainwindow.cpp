@@ -201,12 +201,21 @@ void MainWindow::on_actionAbrir_triggered()
             QFileDialog::getOpenFileName(this, "Abrir Sesión...", QDir::currentPath(),
                                          "Archivos JSON (*.json)");
     if(nombreArchivoJson.isEmpty()) return;
-    json.abrirJson(nombreArchivoJson, this);
+    if(json.abrirJson(nombreArchivoJson, this) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha ocurrido un error al abrir el archivo proporcionado. "
+                                             "Revise el sistema de ficheros.");
+        return;
+    }
     nuevoJson = false;
 
     Json::Sesion sesion = json.interpretarJson();
     //Primero, cerramos la sesion: ------------
-    on_actionCerrar_triggered(); //Cuidado: limpia el Json
+    //No usamos la funcion dedicada porque destruye la clase JSON, lo que provocará crash
+    ui->total->setText("0€");
+    ui->tipoPago->clear();
+    ui->listaArticulos->clear();
+    ui->cuenta->clear();
     //Importamos los cambios -------------
     //Primero el total:
     total = sesion.total;
@@ -297,7 +306,12 @@ void MainWindow::on_actionGuardar_triggered()
     json.setPagado(pagado);
     //Lo guardamos
     json.anadirParametros(this);
-    json.guardarJson(nombreArchivoJson);
+    if(json.guardarJson(nombreArchivoJson) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha habido un error al salvar la sesión. "
+                                             "Revise el sistema de archivos.");
+        return;
+    }
 }
 
 void MainWindow::on_actionGuardar_como_triggered()
@@ -345,5 +359,10 @@ void MainWindow::on_actionGuardar_como_triggered()
     }
     //Creamos el Json
     json.anadirParametros(this);
-    json.guardarJson(nombreArchivoJson);
+    if(json.guardarJson(nombreArchivoJson) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha habido un error al salvar la sesión. "
+                                             "Revise el sistema de archivos");
+        return;
+    }
 }
