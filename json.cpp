@@ -56,6 +56,14 @@ void Json::abrirJson(QString _nombreJson, QWidget* _parent)
 */
 Json::Sesion Json::interpretarJson()
 {
+    //Declaracion de constantes:
+    const std::string TOTAL = "Total";
+    const std::string PAGADO = "Pagado";
+    const std::string TIPOPAGO = "Tipo de pago";
+    const std::string NUMERO_TARJETA = "Numero de tarjeta";
+    const std::string ARTICULOS = "Articulos:";
+    //------------------------------
+
     if(parent == nullptr)
     {
         qDebug() <<"No se ha configurado un QWidget*. Abortar";
@@ -63,32 +71,32 @@ Json::Sesion Json::interpretarJson()
     }
     Sesion sesion;
     //Obtenemos el total:
-    sesion.total = j.at("Total");
+    sesion.total = j.at(TOTAL);
     //Obtenemos el valor de si esta pagado o no:
-    sesion.pagado = j.at("Pagado");
+    sesion.pagado = j.at(PAGADO);
     //Obtenemos el tipo de pago
-    if(j.at("Tipo de pago") == "No seleccionado")
+    if(j.at(TIPOPAGO) == "No seleccionado")
     {
         sesion.tipopago = Nulo;
     }
-    else if(j.at("Tipo de pago") == "Con tarjeta")
+    else if(j.at(TIPOPAGO) == "Con tarjeta")
     {
         sesion.tipopago = Tarjeta;
-        sesion.tarjeta = QString::fromStdString(j.at("Numero de tarjeta"));
+        sesion.tarjeta = QString::fromStdString(j.at(NUMERO_TARJETA));
     }
-    else if(j.at("Tipo de pago") == "En efectivo")
+    else if(j.at(TIPOPAGO) == "En efectivo")
     {
         sesion.tipopago = Efectivo;
     }
-    else if(j.at("Tipo de pago") == "Con cheques")
+    else if(j.at(TIPOPAGO) == "Con cheques")
     {
         sesion.tipopago = Cheques;
     }
     //Y obtenemos la lista de articulos
-    int cantidadArticulos = j.at("Articulos:").at("Cantidad: ");
+    int cantidadArticulos = j.at(ARTICULOS).at("Cantidad: ");
     for(int i = 0; i < cantidadArticulos; ++i)
     {
-        sesion.listaArticulos.push_back(QString::fromStdString(j.at("Articulos:").at("Articulo " + std::to_string(i+1))));
+        sesion.listaArticulos.push_back(QString::fromStdString(j.at(ARTICULOS).at("Articulo " + std::to_string(i+1))));
     }
     //Hemos terminado
     return sesion;
@@ -116,7 +124,7 @@ void Json::guardarJson(QString _nombreJson)
 
 /*
  * Esta funcion cierra el Json ya abierto previamente.
- * Se ejecuta con el destructor (funcion privada).
+ * Se ejecuta con el destructor. Esta funcion es privada
 */
 void Json::cerrarJson()
 {
@@ -127,9 +135,9 @@ void Json::cerrarJson()
 
 /*
  * Esta funcion realiza un chequeo y despues guarda los parametros ya
- * dados con los setters en el Json. Requiere un QWidget* opcional
+ * dados con los setters en el Json. Requiere un QWidget*
 */
-void Json::anadirParametros(QWidget* _parent) /*=nullptr*/
+void Json::anadirParametros(QWidget* _parent)
 {
     //Comprobar el QWidget*
     if(_parent == nullptr && parent == nullptr)

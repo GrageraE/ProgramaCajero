@@ -193,6 +193,10 @@ void MainWindow::on_pagar_clicked()
 //JSON:
 void MainWindow::on_actionAbrir_triggered()
 {
+    if(QMessageBox::question(this, "Atención", "¿Seguro que quieres abrir una nueva sesión? "
+                             "Esta sesión se cerrará.") == QMessageBox::No)
+        return;
+
     QString nombreArchivoJson =
             QFileDialog::getOpenFileName(this, "Abrir Sesión...", QDir::currentPath(),
                                          "Archivos JSON (*.json)");
@@ -200,6 +204,44 @@ void MainWindow::on_actionAbrir_triggered()
     json.abrirJson(nombreArchivoJson, this);
     nuevoJson = false;
 
+    Json::Sesion sesion = json.interpretarJson();
+    //Primero, cerramos la sesion: ------------
+    on_actionCerrar_triggered(); //Cuidado: limpia el Json
+    //Importamos los cambios -------------
+    //Primero el total:
+    total = sesion.total;
+    ui->total->setText(QString::number(total));
+    //Despues si esta pagado o no:
+    pagado = sesion.pagado;
+    //Ahora el tipo de pago (y el numero de tarjeta):
+    switch(sesion.tipopago)
+    {
+    case Json::TipoPago::Nulo:{
+        tipopago = MainWindow::Nulo;
+    }
+        break;
+    case Json::TipoPago::Tarjeta:{
+        tipopago = MainWindow::Tarjeta;
+        ui->tipoPago->setText("Con Tarjeta");
+        numeroTarjeta = sesion.tarjeta;
+    }
+        break;
+    case Json::TipoPago::Efectivo:{
+        tipopago = MainWindow::Efectivo;
+        ui->tipoPago->setText("En Efectivo");
+    }
+        break;
+    case Json::TipoPago::Cheques:{
+        tipopago = MainWindow::Cheque;
+        ui->tipoPago->setText("Con Cheques");
+    }
+        break;
+    }
+    //Ahora importamos la lista de articulos:
+    for(int i = 0; i < sesion.listaArticulos.size(); ++i)
+    {
+        new QListWidgetItem(sesion.listaArticulos.at(i), ui->listaArticulos);
+    }
 }
 
 void MainWindow::on_actionGuardar_triggered()
@@ -209,6 +251,7 @@ void MainWindow::on_actionGuardar_triggered()
     {
         nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión...", QDir::currentPath(),
                                      "Archivos JSON (*.json)");
+        if(nombreArchivoJson.isEmpty()) return;
 
     }
     else
