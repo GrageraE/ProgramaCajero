@@ -9,4 +9,8 @@ before_install:
 script:
  - cd scripts/
  - chmod +x ./build.sh
+<<<<<<< HEAD
  - ./build.sh
+=======
+ - ./build.sh
+>>>>>>> 74bf05c3cec01fd1fd72642bef9a4f83e52144a0
