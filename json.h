@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
-#include <../../vcpkg/JSON/single_include/nlohmann/json.hpp>
+#include <../single_include/nlohmann/json.hpp>
 #include <fstream>
 using std::ifstream;
 using std::ofstream;

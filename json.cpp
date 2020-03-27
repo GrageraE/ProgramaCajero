@@ -5,7 +5,7 @@
 #include <QListWidgetItem>
 //Libreria JSON
 //TODO: Cambiar la ubicación del single_include
-#include <../../vcpkg/JSON/single_include/nlohmann/json.hpp>
+#include <../single_include/nlohmann/json.hpp>
 //Manejo de archivos
 #include <iomanip> //std::setw
 #include <fstream>
