@@ -24,11 +24,6 @@ Json::Json()
     listaArticulos.clear();
 }
 
-Json::~Json()
-{
-    cerrarJson();
-}
-
 /*
  * Esta funcion abre un archivo Json con el argumento
  * "nombreJson". Ademas, requiere de QWidget* para lanzar QMessageBox's
@@ -39,6 +34,7 @@ int Json::abrirJson(QString _nombreJson, QWidget* _parent)
     nombreJson = _nombreJson;
     parent = _parent;
     //Abrimos el archivo
+    ifstream leerArchivo;
     leerArchivo.open(nombreJson.toStdString(), ios::in);
     if(leerArchivo.fail()){
         return -1;
@@ -110,6 +106,7 @@ int Json::guardarJson(QString _nombreJson)
 {
     nombreJson = _nombreJson;
     //Guardamos en el archivo
+    ofstream crearArchivo;
     crearArchivo.open(nombreJson.toStdString(), ios::out);
     if(crearArchivo.fail())
     {
@@ -122,12 +119,9 @@ int Json::guardarJson(QString _nombreJson)
 
 /*
  * Esta funcion cierra el Json ya abierto previamente.
- * Se ejecuta con el destructor. Esta funcion es privada
 */
 void Json::cerrarJson()
 {
-    if(leerArchivo.is_open()) leerArchivo.close();
-    if(crearArchivo.is_open()) crearArchivo.close();
     j.clear();
 }
 

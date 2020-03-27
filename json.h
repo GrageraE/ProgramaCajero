@@ -4,18 +4,15 @@
 #include <QWidget>
 #include <QListWidgetItem>
 #include <../single_include/nlohmann/json.hpp>
-#include <fstream>
-using std::ifstream;
-using std::ofstream;
 
 class Json
 {
 
 public:
     Json();
-    ~Json();
     int abrirJson(QString _nombreJson, QWidget* _parent);
     int guardarJson(QString _nombreJson);
+    void cerrarJson();
     int anadirParametros(QWidget* _parent);
     QString getNombreArchivo();
 
@@ -45,7 +42,6 @@ public:
     void setArticulos(QList<QListWidgetItem*> _lista);
 
 private:
-    void cerrarJson();
     QWidget* parent;
     QString nombreJson;
     int total;
@@ -54,8 +50,6 @@ private:
     QList<QListWidgetItem*> listaArticulos;
 
     nlohmann::json j;
-    ifstream leerArchivo;
-    ofstream crearArchivo;
 
 };
 

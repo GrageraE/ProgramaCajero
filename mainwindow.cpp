@@ -46,7 +46,10 @@ void MainWindow::on_actionCerrar_triggered()
     ui->total->setText("0€");
     ui->listaArticulos->clear();
     total = 0;
-    if(!nuevoJson) json.~Json();
+    if(!nuevoJson){
+        json.cerrarJson();
+        nuevoJson = true;
+    }
 }
 
 void MainWindow::on_boton1_clicked()
