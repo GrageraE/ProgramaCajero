@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QListWidgetItem>
 //Libreria JSON
-//TODO: Cambiar la ubicación del single_include
 #include <../single_include/nlohmann/json.hpp>
 //Manejo de archivos
 #include <iomanip> //std::setw
@@ -51,14 +50,6 @@ int Json::abrirJson(QString _nombreJson, QWidget* _parent)
 */
 Json::Sesion Json::interpretarJson()
 {
-    //Declaracion de constantes:
-    const std::string TOTAL = "Total";
-    const std::string PAGADO = "Pagado";
-    const std::string TIPOPAGO = "Tipo de pago";
-    const std::string NUMERO_TARJETA = "Numero de tarjeta";
-    const std::string ARTICULOS = "Articulos:";
-    //------------------------------
-
     if(parent == nullptr)
     {
         qDebug() <<"No se ha configurado un QWidget*. Abortar";
@@ -156,31 +147,31 @@ int Json::anadirParametros(QWidget* _parent)
     }
     //----------------------
     //Guardamos el total
-    j["Total"] = total;
+    j[TOTAL] = total;
     //Guardamos el tipo de pago
     switch(tipopago){
     case Nulo:{
-        j["Tipo de pago"] = "No seleccionado";
+        j[TIPOPAGO] = "No seleccionado";
     }
         break;
     case Tarjeta:{
-        j["Tipo de pago"] = "Con tarjeta";
-        j["Numero de tarjeta"] = tarjeta.toInt();
+        j[TIPOPAGO] = "Con tarjeta";
+        j[NUMERO_TARJETA] = tarjeta.toStdString();
     }
         break;
     case Efectivo:{
-        j["Tipo de pago"] = "En efectivo";
+        j[TIPOPAGO] = "En efectivo";
     }
         break;
     case Cheques:{
-        j["Tipo de pago"] = "Con cheques";
+        j[TIPOPAGO] = "Con cheques";
     }
         break;
     }
     //Guardamos si esta pagado o no
-    j["Pagado"] = pagado;
+    j[PAGADO] = pagado;
     //Guardamos la lista de articulos
-    j["Articulos:"]["Cantidad: "] = listaArticulos.size();
+    j[ARTICULOS]["Cantidad: "] = listaArticulos.size();
     for(int i = 0; i < listaArticulos.size(); ++i)
     {
         j["Articulos:"]["Articulo " + std::to_string(i+1)] = listaArticulos.at(i)->text().toStdString();

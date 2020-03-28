@@ -1,0 +1,14 @@
+{
+    "Articulos:": {
+        "Articulo 1": "30€",
+        "Articulo 2": "20€",
+        "Articulo 3": "20€",
+        "Articulo 4": "30€",
+        "Articulo 5": "30€",
+        "Cantidad: ": 1
+    },
+    "Numero de tarjeta": "",
+    "Pagado": false,
+    "Tipo de pago": "Con tarjeta",
+    "Total": 30
+}

@@ -69,5 +69,6 @@ private:
 
     Json json;
     bool nuevoJson;
+    QString obtenerNombreSesion(QString path);
 };
 #endif // MAINWINDOW_H

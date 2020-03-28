@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->cuenta->setReadOnly(true); //Evitar que el usuario introduzca caracteres no validos
     ui->total->setText("0€");
     total = 0;
+    ui->nombreSesion->setText("-----------------------");
     numeroTarjeta = "";
     pagado = false;
     //Para que el usuario pueda seleccionar varios articulos al mismo tiempo:
@@ -48,6 +49,7 @@ void MainWindow::on_actionCerrar_triggered()
     total = 0;
     if(!nuevoJson){
         json.cerrarJson();
+        ui->nombreSesion->setText("-----------------------");
         nuevoJson = true;
     }
 }
@@ -194,6 +196,14 @@ void MainWindow::on_pagar_clicked()
 }
 
 //JSON:
+QString MainWindow::obtenerNombreSesion(QString path)
+{
+    QFileInfo f(path);
+    if(!f.isFile())
+        return QString();
+    return f.baseName();
+}
+
 void MainWindow::on_actionAbrir_triggered()
 {
     if(QMessageBox::question(this, "Atención", "¿Seguro que quieres abrir una nueva sesión? "
@@ -254,6 +264,8 @@ void MainWindow::on_actionAbrir_triggered()
     {
         new QListWidgetItem(sesion.listaArticulos.at(i), ui->listaArticulos);
     }
+    //Por ultimo, indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
 }
 
 void MainWindow::on_actionGuardar_triggered()
@@ -315,6 +327,8 @@ void MainWindow::on_actionGuardar_triggered()
                                              "Revise el sistema de archivos.");
         return;
     }
+    //Indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
 }
 
 void MainWindow::on_actionGuardar_como_triggered()
@@ -368,4 +382,6 @@ void MainWindow::on_actionGuardar_como_triggered()
                                              "Revise el sistema de archivos");
         return;
     }
+    //Indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
 }

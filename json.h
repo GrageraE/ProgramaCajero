@@ -51,6 +51,14 @@ private:
 
     nlohmann::json j;
 
+    //Declaracion de constantes:
+    const std::string TOTAL = "Total";
+    const std::string PAGADO = "Pagado";
+    const std::string TIPOPAGO = "Tipo de pago";
+    const std::string NUMERO_TARJETA = "Numero de tarjeta";
+    const std::string ARTICULOS = "Articulos:";
+    //------------------------------
+
 };
 
 #endif // JSON_H
