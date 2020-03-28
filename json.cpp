@@ -171,6 +171,7 @@ int Json::anadirParametros(QWidget* _parent)
     //Guardamos si esta pagado o no
     j[PAGADO] = pagado;
     //Guardamos la lista de articulos
+    j[ARTICULOS].clear();
     j[ARTICULOS]["Cantidad: "] = listaArticulos.size();
     for(int i = 0; i < listaArticulos.size(); ++i)
     {
