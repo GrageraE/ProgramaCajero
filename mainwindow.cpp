@@ -1,10 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ventanatipopago.h"
+#include "impresion.h"
 //ventanaPago*
 #include "ventanapagotarjeta.h"
-
 #include "ventanapagocheques.h"
+//No se incluye implementacion de ventana para Efectivo por causas obvias
 //--------------
 #include <QMessageBox>
 
@@ -20,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
     tipopago = Nulo;
+    numeroTarjeta = "";
+    pagado = false;
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +42,7 @@ void MainWindow::on_actionCerrar_triggered()
     ui->total->setText("0€");
     ui->listaArticulos->clear();
     total = 0;
+    tipopago = Nulo;
 }
 
 void MainWindow::on_boton1_clicked()
@@ -164,10 +168,11 @@ void MainWindow::on_pagar_clicked()
         ventanaPagoTarjeta ventana(total);
         ventana.setModal(true);
         if(ventana.exec() == QDialog::DialogCode::Rejected) return;
+        numeroTarjeta = ventana.numeroTarjeta;
     }
         break;
     case MainWindow::Efectivo:{
-
+        QMessageBox::information(this, "Pagado", "Pagado correctamente");
     }
         break;
     case MainWindow::Cheque:{
@@ -177,5 +182,73 @@ void MainWindow::on_pagar_clicked()
     }
         break;
     }
-    on_actionCerrar_triggered(); //Cierra la sesión
+    pagado = true; //Ya esta pagado
+    if(QMessageBox::question(this, "Recibo", "¿Quiere imprimir un recibo ahora?")
+            == QMessageBox::Yes)
+    {
+        on_recibo_clicked(); //Imprimir
+    }
+    if(QMessageBox::question(this, "Terminar", "¿Quiere terminar la sesión ahora? No podrás"
+                             " imprimir un recibo después de esta acción")
+            == QMessageBox::Yes)
+    {
+        on_actionCerrar_triggered(); //Cerrar
+    }
+}
+
+void MainWindow::on_recibo_clicked()
+{
+    //Obtenemos la lista de articulos
+    if(ui->listaArticulos->count() == 0)
+    {
+        QMessageBox::critical(this, "Error", "No hay artículos a pagar");
+        return;
+    }
+    QList<QListWidgetItem*> lista;
+    for(int i = 0; i < ui->listaArticulos->count(); ++i)
+    {
+        lista.push_back(ui->listaArticulos->item(i));
+    }
+    //Comprobamos el total y el estado de pago
+    if(!pagado)
+    {
+        QMessageBox::critical(this, "Error", "No se ha completado el pago");
+        return;
+    }
+    if(total == 0)
+    {
+        QMessageBox::critical(this, "Error", "El total es 0");
+        return;
+    }
+    Impresion impresion(this, lista, total);
+    //Seleccionamos el tipo de pago
+    switch(tipopago)
+    {
+    case Nulo:{
+        QMessageBox::critical(this, "Error", "No se ha seleccionado tipo de pago");
+        return;
+    }
+    case Tarjeta:{
+        impresion.setTipoPago(Impresion::TipoPago::Tarjeta);
+        impresion.setNumeroTarjeta(numeroTarjeta);
+    }
+        break;
+    case Efectivo:{
+        impresion.setTipoPago(Impresion::TipoPago::Efectivo);
+    }
+        break;
+    case Cheque:{
+        impresion.setTipoPago(Impresion::TipoPago::Cheques);
+    }
+        break;
+    }
+    impresion.imprimir();
+    QMessageBox::information(this, "Información", "Pdf creado correctamente");
+}
+
+void MainWindow::on_borrar_clicked()
+{
+    QString txt = ui->cuenta->text();
+    txt.truncate(txt.size()-1);
+    ui->cuenta->setText(txt);
 }

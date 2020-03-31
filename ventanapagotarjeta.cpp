@@ -7,6 +7,7 @@ ventanaPagoTarjeta::ventanaPagoTarjeta(int _total, QWidget *parent) :
     ui(new Ui::ventanaPagoTarjeta)
 {
     ui->setupUi(this);
+    numeroTarjeta = "";
     ui->numeroTarjeta->setEchoMode(QLineEdit::Password);
     ui->codigoSeguridad->setEchoMode(QLineEdit::Password);
     total = _total;
@@ -54,5 +55,6 @@ void ventanaPagoTarjeta::on_buttonBox_accepted()
      */
 
     QMessageBox::information(this, "Información", "Pago efectuado correctamente");
+    numeroTarjeta = tarjeta;
     accept();
 }
