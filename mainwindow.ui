@@ -345,6 +345,8 @@
     </property>
     <property name="text">
      <string/>
+    </property>
+    </widget>
    <widget class="QPushButton" name="borrar">
     <property name="geometry">
      <rect>
