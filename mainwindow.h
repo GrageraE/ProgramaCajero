@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "json.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -48,6 +49,12 @@ private slots:
 
     void on_pagar_clicked();
 
+    void on_actionAbrir_triggered();
+
+    void on_actionGuardar_triggered();
+
+    void on_actionGuardar_como_triggered();
+
     void on_recibo_clicked();
 
     void on_borrar_clicked();
@@ -61,7 +68,12 @@ private:
         Cheque
     }tipopago;
     int total;
-    QString numeroTarjeta; //Para imprimir recibo
+    QString numeroTarjeta;
     bool pagado;
+
+    Json json;
+    bool nuevoJson;
+    QString obtenerNombreSesion(QString path);
+
 };
 #endif // MAINWINDOW_H

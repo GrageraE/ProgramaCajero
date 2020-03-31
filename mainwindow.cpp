@@ -7,6 +7,10 @@
 #include "ventanapagocheques.h"
 //No se incluye implementacion de ventana para Efectivo por causas obvias
 //--------------
+//Json
+#include "json.h"
+#include <QFileDialog>
+//--------------
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,12 +21,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->cuenta->setReadOnly(true); //Evitar que el usuario introduzca caracteres no validos
     ui->total->setText("0€");
     total = 0;
+    ui->nombreSesion->setText("-----------------------");
+    numeroTarjeta = "";
+    pagado = false;
     //Para que el usuario pueda seleccionar varios articulos al mismo tiempo:
     ui->listaArticulos->setSelectionMode(QAbstractItemView::ExtendedSelection);
     //El tipo de pago, por defecto, no esta seleccionado
     tipopago = Nulo;
-    numeroTarjeta = "";
-    pagado = false;
+    //Por defecto, esta sesion se considera nueva
+    nuevoJson = true;
 }
 
 MainWindow::~MainWindow()
@@ -43,6 +50,11 @@ void MainWindow::on_actionCerrar_triggered()
     ui->listaArticulos->clear();
     total = 0;
     tipopago = Nulo;
+    if(!nuevoJson){
+        json.cerrarJson();
+        ui->nombreSesion->setText("-----------------------");
+        nuevoJson = true;
+    }
 }
 
 void MainWindow::on_boton1_clicked()
@@ -251,4 +263,195 @@ void MainWindow::on_borrar_clicked()
     QString txt = ui->cuenta->text();
     txt.truncate(txt.size()-1);
     ui->cuenta->setText(txt);
+}
+
+//JSON:
+QString MainWindow::obtenerNombreSesion(QString path)
+{
+    QFileInfo f(path);
+    if(!f.isFile())
+        return QString();
+    return f.baseName();
+}
+
+void MainWindow::on_actionAbrir_triggered()
+{
+    if(QMessageBox::question(this, "Atención", "¿Seguro que quieres abrir una nueva sesión? "
+                             "Esta sesión se cerrará.") == QMessageBox::No)
+        return;
+
+    QString nombreArchivoJson =
+            QFileDialog::getOpenFileName(this, "Abrir Sesión...", QDir::currentPath(),
+                                         "Archivos JSON (*.json)");
+    if(nombreArchivoJson.isEmpty()) return;
+    if(json.abrirJson(nombreArchivoJson, this) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha ocurrido un error al abrir el archivo proporcionado. "
+                                             "Revise el sistema de ficheros.");
+        return;
+    }
+    nuevoJson = false;
+
+    Json::Sesion sesion = json.interpretarJson();
+    //Primero, cerramos la sesion: ------------
+    //No usamos la funcion dedicada porque destruye la clase JSON, lo que provocará crash
+    ui->total->setText("0€");
+    ui->tipoPago->clear();
+    ui->listaArticulos->clear();
+    ui->cuenta->clear();
+    //Importamos los cambios -------------
+    //Primero el total:
+    total = sesion.total;
+    ui->total->setText(QString::number(total));
+    //Despues si esta pagado o no:
+    pagado = sesion.pagado;
+    //Ahora el tipo de pago (y el numero de tarjeta):
+    switch(sesion.tipopago)
+    {
+    case Json::TipoPago::Nulo:{
+        tipopago = MainWindow::Nulo;
+    }
+        break;
+    case Json::TipoPago::Tarjeta:{
+        tipopago = MainWindow::Tarjeta;
+        ui->tipoPago->setText("Con Tarjeta");
+        numeroTarjeta = sesion.tarjeta;
+    }
+        break;
+    case Json::TipoPago::Efectivo:{
+        tipopago = MainWindow::Efectivo;
+        ui->tipoPago->setText("En Efectivo");
+    }
+        break;
+    case Json::TipoPago::Cheques:{
+        tipopago = MainWindow::Cheque;
+        ui->tipoPago->setText("Con Cheques");
+    }
+        break;
+    }
+    //Ahora importamos la lista de articulos:
+    for(int i = 0; i < sesion.listaArticulos.size(); ++i)
+    {
+        new QListWidgetItem(sesion.listaArticulos.at(i), ui->listaArticulos);
+    }
+    //Por ultimo, indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
+}
+
+void MainWindow::on_actionGuardar_triggered()
+{
+    QString nombreArchivoJson;
+    if(nuevoJson)
+    {
+        nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión...", QDir::currentPath(),
+                                     "Archivos JSON (*.json)");
+        if(nombreArchivoJson.isEmpty()) return;
+
+    }
+    else
+        nombreArchivoJson = json.getNombreArchivo();
+
+    nuevoJson = false;
+    //Configuramos el total
+    json.setTotal(total);
+    //Configuramos la lista
+    if(ui->listaArticulos->count() == 0)
+    {
+        QMessageBox::critical(this, "Error", "La lista de artículos está vacía.");
+        return;
+    }
+    QList<QListWidgetItem*> lista;
+    for(int i = 0; i < ui->listaArticulos->count(); ++i)
+    {
+        lista.push_back(ui->listaArticulos->item(i));
+    }
+    json.setArticulos(lista);
+    //Configuramos el tipo de pago
+    switch(tipopago)
+    {
+    case Nulo:{
+        json.setTipoPago(Json::TipoPago::Nulo);
+    }
+        break;
+    case Tarjeta:{
+        json.setTipoPago(Json::TipoPago::Tarjeta);
+        json.setnumeroTarjeta(numeroTarjeta);
+    }
+        break;
+    case Efectivo:{
+        json.setTipoPago(Json::TipoPago::Efectivo);
+    }
+        break;
+    case Cheque:{
+        json.setTipoPago(Json::TipoPago::Cheques);
+    }
+        break;
+    }
+    //Mandamos el estado de la compra
+    json.setPagado(pagado);
+    //Lo guardamos
+    json.anadirParametros(this);
+    if(json.guardarJson(nombreArchivoJson) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha habido un error al salvar la sesión. "
+                                             "Revise el sistema de archivos.");
+        return;
+    }
+    //Indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
+}
+
+void MainWindow::on_actionGuardar_como_triggered()
+{
+    QString nombreArchivoJson = QFileDialog::getSaveFileName(this, "Guardar sesión como...",
+                                                             QDir::currentPath(),
+                                                             "Archivos JSON (*.json)");
+    if(nombreArchivoJson.isEmpty()) return;
+    //Comprobaciones:
+    if(total <= 0)
+    {
+        QMessageBox::critical(this, "Error", "Inicie la sesión de compra para guardar esta sesión");
+        return;
+    }
+    if(ui->listaArticulos->count() == 0) return;
+    //Creamos el JSON
+    json.setTotal(total);
+    json.setPagado(pagado);
+    //Obtenemos los articulos
+    QList<QListWidgetItem*> lista;
+    for(int i = 0; i < ui->listaArticulos->count(); ++i)
+    {
+        lista.push_back(ui->listaArticulos->item(i));
+    }
+    json.setArticulos(lista);
+    //Obtenemos el tipo de pago
+    switch(tipopago){
+    case Nulo:{
+        json.setTipoPago(Json::TipoPago::Nulo);
+    }
+        break;
+    case Tarjeta:{
+        json.setTipoPago(Json::TipoPago::Tarjeta);
+        json.setnumeroTarjeta(numeroTarjeta);
+    }
+        break;
+    case Efectivo:{
+        json.setTipoPago(Json::TipoPago::Efectivo);
+    }
+        break;
+    case Cheque:{
+        json.setTipoPago(Json::TipoPago::Cheques);
+    }
+        break;
+    }
+    //Creamos el Json
+    json.anadirParametros(this);
+    if(json.guardarJson(nombreArchivoJson) == -1)
+    {
+        QMessageBox::critical(this, "Error", "Ha habido un error al salvar la sesión. "
+                                             "Revise el sistema de archivos");
+        return;
+    }
+    //Indicamos el nombre de la sesion:
+    ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
 }
