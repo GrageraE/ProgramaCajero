@@ -55,6 +55,10 @@ private slots:
 
     void on_actionGuardar_como_triggered();
 
+    void on_recibo_clicked();
+
+    void on_borrar_clicked();
+
 private:
     Ui::MainWindow *ui;
     enum TipoPago{
@@ -70,5 +74,6 @@ private:
     Json json;
     bool nuevoJson;
     QString obtenerNombreSesion(QString path);
+
 };
 #endif // MAINWINDOW_H

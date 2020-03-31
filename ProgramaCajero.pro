@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    impresion.cpp \
     main.cpp \
     mainwindow.cpp \
     ventanapagocheques.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
     json.cpp
 
 HEADERS += \
+    impresion.h \
     mainwindow.h \
     ventanapagocheques.h \
     ventanapagotarjeta.h \
