@@ -6,6 +6,8 @@ Una prueba para crear un programa que serviría para las cajas
 1. GNU/Make: `sudo apt update && sudo apt install build-essential`
 1. [JSON for Modern C++](https://github.com/nlohmann/json). Tienes que modificar el archivo [ProgramaCajero.pro](https://github.com/GrageraE/ProgramaCajero/blob/master/ProgramaCajero.pro) con el directorio donde tengas la librería.
 #### Compilación en Linux
+**NOTA:** Estos pasos serán desactualizados cuando emerja #6, que cambia el proceso.
+**NOTA 2:** Lo más probable es que te de warnings el paso 3. No les hagas caso.
 1. Clona el repositorio: `git clone https://github.com/GrageraE/ProgramaCajero.git`
 1. Crea el directorio de compilación: `mkdir build && cd build`
 1. Crea el `makefile`: `qmake ..`
@@ -24,3 +26,5 @@ Una prueba para crear un programa que serviría para las cajas
 - Incluir un intérprete de JSON para guardar y crear sesiones de compra
 ## Generar Cheques
 * Para generar cheques, puedes usar el script de Python ya incluído en el proyecto
+## Impresión
+**NOTA:** Al seleccionar la impresora en el diálogo de impresión, al menos en Windows, **QUITA** la casilla `Imprimir a un archivo` para que el documento binario/XML (esto depende de tu impresora) se mande a la impresora y no solo se guarde en el disco.
