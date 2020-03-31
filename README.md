@@ -1,4 +1,4 @@
-# ProgramaCajero
+# ProgramaCajero [![Build Status](https://travis-ci.com/GrageraE/ProgramaCajero.svg?branch=master)](https://travis-ci.com/GrageraE/ProgramaCajero)
 Una prueba para crear un programa que serviría para las cajas
 ## Compilación
 #### Dependencias 
