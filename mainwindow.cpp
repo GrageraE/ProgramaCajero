@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "ventanatipopago.h"
 #include "impresion.h"
+#include "actualizacion.h"
 //ventanaPago*
 #include "ventanapagotarjeta.h"
 #include "ventanapagocheques.h"
@@ -30,6 +31,27 @@ MainWindow::MainWindow(QWidget *parent)
     tipopago = Nulo;
     //Por defecto, esta sesion se considera nueva
     nuevoJson = true;
+    //Comprobar actualizaciones:
+    if(QMessageBox::question(this, "Actualizaciones", "¿Quiere buscar actualizaciones?") == QMessageBox::Yes)
+    {
+        Actualizacion a(this);
+        Actualizacion::Respuesta r = a.comprobarActualizaciones();
+        switch(r.estado)
+        {
+        case Actualizacion::Error: break;
+        case Actualizacion::Actualizado:{
+            QMessageBox::information(this, "Actualizado", "El programa está actualizado");
+        }
+            break;
+        case Actualizacion::Desactualizado:{
+            qDebug() <<"Version nueva: " <<r.version <<"\n";
+            qDebug() <<"URL: " << r.url <<"\n";
+            qDebug() <<"Novedades: " <<r.novedades <<"\n";
+            QMessageBox::information(this, "Desactualizado", "desactualizado");
+        }
+            break;
+        }
+    }
 }
 
 MainWindow::~MainWindow()
