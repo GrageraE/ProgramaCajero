@@ -35,7 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     if(QMessageBox::question(this, "Actualizaciones", "¿Quiere buscar actualizaciones?") == QMessageBox::Yes)
     {
         Actualizacion a(this);
-        Actualizacion::Respuesta r = a.comprobarActualizaciones();
+        a.comprobarActualizaciones();
+        Actualizacion::Respuesta r = a.respuesta;
         switch(r.estado)
         {
         case Actualizacion::Error: break;
@@ -44,9 +45,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
             break;
         case Actualizacion::Desactualizado:{
-            qDebug() <<"Version nueva: " <<r.version <<"\n";
-            qDebug() <<"URL: " << r.url <<"\n";
-            qDebug() <<"Novedades: " <<r.novedades <<"\n";
+            qDebug() <<"Version nueva: " <<r.version;
+            qDebug() <<"URL: " << r.url;
+            qDebug() <<"Novedades: " <<r.novedades;
             QMessageBox::information(this, "Desactualizado", "desactualizado");
         }
             break;

@@ -23,18 +23,17 @@ public:
     };
 
     struct Respuesta{
-        EstadoActualiacion estado;
+        EstadoActualiacion estado = Error;
         QString version = "-1";
         QString url = "";
         QString novedades = "";
-    };
+    }respuesta;
 
-    Actualizacion::Respuesta comprobarActualizaciones();
+    void comprobarActualizaciones();
 
 private slots:
-    void recogerRespuesta(QNetworkReply* reply);
+    void recogerRespuesta(QString reply);
 private:
-    Respuesta respuesta;
     QWidget* parent;
 };
 
