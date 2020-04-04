@@ -8,7 +8,6 @@ Una prueba para crear un programa que serviría para las cajas
 sudo apt update && sudo apt install build-essential
 ```
 3. [JSON for Modern C++](https://github.com/nlohmann/json). Si estás en Linux, puedes usar el script `build.sh` para despreocuparte de su descarga e instalación. Si estás en Windows, descarga el paquete `include.zip` de las releases de la librería, extráelo y pon la carpeta `single_include` en el directorio superior de este repositorio (es posible que haya traducción del script para Wndows en algún futuro...).
-4. [C++ Requests](https://github.com/whoshuu/cpr).
 #### Compilación en Linux
 1. Clona el repositorio: 
 ```
