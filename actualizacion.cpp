@@ -31,6 +31,11 @@ void Actualizacion::comprobarActualizaciones()
     QObject::connect(r, SIGNAL(finished()), &loop, SLOT(quit())); //Significa que cuando termine, pare el bucle
     loop.exec(); //Aquí empieza el bucle
     //Interpretamos la respuesta
+    if(r->error())
+    {
+        QMessageBox::critical(parent, "Error", "Error de red: " + r->errorString());
+        return;
+    }
     recogerRespuesta(QString(r->readAll()));
 }
 
@@ -40,7 +45,6 @@ void Actualizacion::recogerRespuesta(QString reply)
     nlohmann::json j;
     j = nlohmann::json::parse(reply.toStdString());
     respuesta.version = QString::fromStdString(j.at("tag_name"));
-    qDebug() <<respuesta.version;
     if(respuesta.version == VERSION){
         respuesta.estado = Actualizacion::Actualizado;
     }

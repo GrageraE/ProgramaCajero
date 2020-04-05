@@ -4,16 +4,16 @@
 #include <QWidget>
 #include <QNetworkReply>
 
-class Actualizacion : public QObject
+class Actualizacion
 {
 
-    Q_OBJECT
+    //Q_OBJECT
 
+public:
     //Esta es la version del programa
     //DEBE DE ESTAR ACTUALIZADA EN TODO MOMENTO
     const QString VERSION = "1.1.0";
     //--------------------------------
-public:
     Actualizacion(QWidget* _parent);
 
     enum EstadoActualiacion{
@@ -31,9 +31,8 @@ public:
 
     void comprobarActualizaciones();
 
-private slots:
-    void recogerRespuesta(QString reply);
 private:
+    void recogerRespuesta(QString reply);
     QWidget* parent;
 };
 

@@ -20,6 +20,7 @@ SOURCES += \
     impresion.cpp \
     main.cpp \
     mainwindow.cpp \
+    ventanaactualizar.cpp \
     ventanapagocheques.cpp \
     ventanapagotarjeta.cpp \
     ventanatipopago.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     actualizacion.h \
     impresion.h \
     mainwindow.h \
+    ventanaactualizar.h \
     ventanapagocheques.h \
     ventanapagotarjeta.h \
     ventanatipopago.h \
@@ -36,6 +38,7 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui \
+    ventanaactualizar.ui \
     ventanapagocheques.ui \
     ventanapagotarjeta.ui \
     ventanatipopago.ui

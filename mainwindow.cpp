@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "ventanatipopago.h"
 #include "impresion.h"
-#include "actualizacion.h"
 //ventanaPago*
 #include "ventanapagotarjeta.h"
 #include "ventanapagocheques.h"
@@ -12,6 +11,8 @@
 #include "json.h"
 #include <QFileDialog>
 //--------------
+#include "actualizacion.h"
+#include "ventanaactualizar.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -45,10 +46,9 @@ MainWindow::MainWindow(QWidget *parent)
         }
             break;
         case Actualizacion::Desactualizado:{
-            qDebug() <<"Version nueva: " <<r.version;
-            qDebug() <<"URL: " << r.url;
-            qDebug() <<"Novedades: " <<r.novedades;
-            QMessageBox::information(this, "Desactualizado", "desactualizado");
+            ventanaActualizar v(r, a.VERSION);
+            v.setModal(true);
+            v.exec();
         }
             break;
         }
@@ -477,4 +477,35 @@ void MainWindow::on_actionGuardar_como_triggered()
     }
     //Indicamos el nombre de la sesion:
     ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
+}
+
+//Actualizaciones:
+void MainWindow::on_actionVersi_n_Actual_triggered()
+{
+    Actualizacion a(this);
+    QMessageBox::information(this, "Versión", "Versión " + a.VERSION);
+}
+
+void MainWindow::on_actionComprobar_Actualizaciones_triggered()
+{
+    Actualizacion a(this);
+    a.comprobarActualizaciones();
+    Actualizacion::Respuesta r = a.respuesta;
+    switch(r.estado)
+    {
+    case Actualizacion::Error:{
+        QMessageBox::critical(this, "Error", "Ha habido un error al recuperar las actualizaciones");
+    }
+        break;
+    case Actualizacion::Desactualizado:{
+        ventanaActualizar v(r, a.VERSION);
+        v.setModal(true);
+        v.exec();
+    }
+        break;
+    case Actualizacion::Actualizado:{
+        QMessageBox::information(this, "Actualizado", "El programa está actualizado");
+    }
+        break;
+    }
 }
