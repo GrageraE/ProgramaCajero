@@ -346,7 +346,7 @@
     <property name="text">
      <string/>
     </property>
-    </widget>
+   </widget>
    <widget class="QPushButton" name="borrar">
     <property name="geometry">
      <rect>
@@ -381,7 +381,17 @@
     <addaction name="separator"/>
     <addaction name="actionSalir"/>
    </widget>
+   <widget class="QMenu" name="menuAyuda">
+    <property name="title">
+     <string>Ayuda</string>
+    </property>
+    <addaction name="actionRepositorio"/>
+    <addaction name="separator"/>
+    <addaction name="actionComprobar_Actualizaciones"/>
+    <addaction name="actionVersi_n_Actual"/>
+   </widget>
    <addaction name="menuArchivo"/>
+   <addaction name="menuAyuda"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbrir">
@@ -407,6 +417,21 @@
   <action name="actionSalir">
    <property name="text">
     <string>Salir</string>
+   </property>
+  </action>
+  <action name="actionRepositorio">
+   <property name="text">
+    <string>Repositorio</string>
+   </property>
+  </action>
+  <action name="actionComprobar_Actualizaciones">
+   <property name="text">
+    <string>Comprobar Actualizaciones...</string>
+   </property>
+  </action>
+  <action name="actionVersi_n_Actual">
+   <property name="text">
+    <string>Versión Actual</string>
    </property>
   </action>
  </widget>

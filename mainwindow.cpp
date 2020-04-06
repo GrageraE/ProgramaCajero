@@ -11,6 +11,9 @@
 #include "json.h"
 #include <QFileDialog>
 //--------------
+#include "actualizacion.h"
+#include "ventanaactualizar.h"
+#include <QDesktopServices>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -30,6 +33,27 @@ MainWindow::MainWindow(QWidget *parent)
     tipopago = Nulo;
     //Por defecto, esta sesion se considera nueva
     nuevoJson = true;
+    //Comprobar actualizaciones:
+    if(QMessageBox::question(this, "Actualizaciones", "¿Quiere buscar actualizaciones?") == QMessageBox::Yes)
+    {
+        Actualizacion a(this);
+        a.comprobarActualizaciones();
+        Actualizacion::Respuesta r = a.respuesta;
+        switch(r.estado)
+        {
+        case Actualizacion::Error: break;
+        case Actualizacion::Actualizado:{
+            QMessageBox::information(this, "Actualizado", "El programa está actualizado");
+        }
+            break;
+        case Actualizacion::Desactualizado:{
+            ventanaActualizar v(r, a.VERSION);
+            v.setModal(true);
+            v.exec();
+        }
+            break;
+        }
+    }
 }
 
 MainWindow::~MainWindow()
@@ -454,4 +478,40 @@ void MainWindow::on_actionGuardar_como_triggered()
     }
     //Indicamos el nombre de la sesion:
     ui->nombreSesion->setText(obtenerNombreSesion(nombreArchivoJson));
+}
+
+//Actualizaciones:
+void MainWindow::on_actionVersi_n_Actual_triggered()
+{
+    Actualizacion a(this);
+    QMessageBox::information(this, "Versión", "Versión " + a.VERSION);
+}
+
+void MainWindow::on_actionComprobar_Actualizaciones_triggered()
+{
+    Actualizacion a(this);
+    a.comprobarActualizaciones();
+    Actualizacion::Respuesta r = a.respuesta;
+    switch(r.estado)
+    {
+    case Actualizacion::Error:{
+        QMessageBox::critical(this, "Error", "Ha habido un error al recuperar las actualizaciones");
+    }
+        break;
+    case Actualizacion::Desactualizado:{
+        ventanaActualizar v(r, a.VERSION);
+        v.setModal(true);
+        v.exec();
+    }
+        break;
+    case Actualizacion::Actualizado:{
+        QMessageBox::information(this, "Actualizado", "El programa está actualizado");
+    }
+        break;
+    }
+}
+
+void MainWindow::on_actionRepositorio_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/GrageraE/ProgramaCajero"));
 }

@@ -1,7 +1,7 @@
-#Descargamos la libreria
+#Descargamos y extraemos la libreria
 wget https://github.com/nlohmann/json/releases/download/v3.7.3/include.zip 
 unzip include.zip -d include 
-#Copiamos la libreria al directorio adecuado
+#Movemos la libreria al directorio adecuado
 mv ./include/single_include ../..
 #Compilamos el programa
 echo "Compilando..."
@@ -10,7 +10,7 @@ mkdir build
 cd build
 qmake ..
 make
-echo "Terminado"
+echo "Compilado"
 #Limpiamos los mocs
 echo "Limpiando..."
 make clean

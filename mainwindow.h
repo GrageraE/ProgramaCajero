@@ -59,6 +59,12 @@ private slots:
 
     void on_borrar_clicked();
 
+    void on_actionVersi_n_Actual_triggered();
+
+    void on_actionComprobar_Actualizaciones_triggered();
+
+    void on_actionRepositorio_triggered();
+
 private:
     Ui::MainWindow *ui;
     enum TipoPago{

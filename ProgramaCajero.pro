@@ -1,4 +1,4 @@
-QT       += core gui printsupport
+QT       += core gui printsupport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,17 +16,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    actualizacion.cpp \
     impresion.cpp \
     main.cpp \
     mainwindow.cpp \
+    ventanaactualizar.cpp \
     ventanapagocheques.cpp \
     ventanapagotarjeta.cpp \
     ventanatipopago.cpp \
     json.cpp
 
 HEADERS += \
+    actualizacion.h \
     impresion.h \
     mainwindow.h \
+    ventanaactualizar.h \
     ventanapagocheques.h \
     ventanapagotarjeta.h \
     ventanatipopago.h \
@@ -34,6 +38,7 @@ HEADERS += \
 
 FORMS += \
     mainwindow.ui \
+    ventanaactualizar.ui \
     ventanapagocheques.ui \
     ventanapagotarjeta.ui \
     ventanatipopago.ui
