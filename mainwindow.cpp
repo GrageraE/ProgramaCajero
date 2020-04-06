@@ -13,6 +13,7 @@
 //--------------
 #include "actualizacion.h"
 #include "ventanaactualizar.h"
+#include <QDesktopServices>
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -508,4 +509,9 @@ void MainWindow::on_actionComprobar_Actualizaciones_triggered()
     }
         break;
     }
+}
+
+void MainWindow::on_actionRepositorio_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/GrageraE/ProgramaCajero"));
 }

@@ -13,13 +13,12 @@ ventanaActualizar::ventanaActualizar(Actualizacion::Respuesta _respuesta, QStrin
     //Configurar el dialog
     ui->versionInstalada->setText(VERSION);
     ui->versionDisponible->setText(r.version);
-    ui->cuadroNovedades->setReadOnly(true);
 
-    //Esto está comentado porque usa features de Qt 5.14, y tengo Qt 5.13 :(
-    //QTextDocument* doc = new QTextDocument();
-    //doc->setMarkdown
-    //ui->cuadroNovedades->setMarkdown();
-    ui->cuadroNovedades->setPlainText(r.novedades); //TODO: Quitar esto
+    QTextDocument* doc = new QTextDocument(ui->cuadroNovedades);
+    doc->setDocumentLayout(new QPlainTextDocumentLayout(doc));
+    doc->setMarkdown(r.novedades);
+    ui->cuadroNovedades->setDocument(doc);
+    ui->cuadroNovedades->setReadOnly(true);
 }
 
 ventanaActualizar::~ventanaActualizar()
@@ -35,4 +34,5 @@ void ventanaActualizar::on_buttonBox_rejected()
 void ventanaActualizar::on_buttonBox_accepted()
 {
     QDesktopServices::openUrl(QUrl(r.url));
+    accept();
 }
