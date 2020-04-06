@@ -11,15 +11,31 @@ sudo apt update && sudo apt install build-essential
 #### Compilación en Linux
 1. Clona el repositorio: 
 ```
-git clone https://github.com/GrageraE/ProgramaCajero.git
+$ git clone https://github.com/GrageraE/ProgramaCajero.git
 ```
 2. Añade permisos de ejecución al script de compilación y ejecútalo:
 ```
-cd scripts/
-chmod +x build.sh
-./build.sh
+$ cd scripts/
+$ chmod +x build.sh
+$ ./build.sh
 ```
 3. Espera a que termine el proceso y tendrás el ejecutable en `./build/ProgramaCajero`
+#### Compilación en Windows
+1. Clona el repositorio:
+```
+PS > git clone https://github.com/GrageraE/ProgramaCajero.git
+```
+2. Ejecuta el script en una ventana de PowerShell:
+```
+PS > cd .\scripts\
+PS > .\build.ps1
+```
+**NOTA:** El script de PowerShell, por el momento, no funciona. No es mi problema, sino por la identación especial de Make
+**NOTA 2:** Aunque PowerShell esté también para Linux, **NO** uses este script: mejor usa el de Bash
+**NOTA 3:** En Windows, es posible que necesites modificar los strings de la parte del PATH.
+**NOTA 4:** En Windows, necesitarás:
+* Microsoft Visual Studio
+* `mingw64-make`
 ## Características
 #### Ya desarrolladas
 - De momento hay dos tipos (de tres) de pago desarrollados:
